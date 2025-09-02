@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Save Card on File</title>
+  <script src="https://web.squarecdn.com/v1/square.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #f8f9fa;
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: #556B2F;
+      color: white;
+      padding: 50px 40px;
+      text-align: center;
+      border-bottom: 3px solid #D2B48C;
+    }
+    
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo-top {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #F5F5DC;
+      margin-bottom: 8px;
+    }
+    
+    .logo-main {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 3.2rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: white;
+      margin-bottom: 8px;
+    }
+    
+    .logo-bottom {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #F5F5DC;
+    }
+    
+    .header .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 300;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    
+    .header .subtitle-small {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+    
+    .header .slogan {
+      font-size: 1.1rem;
+      color: #F5F5DC;
+      font-weight: 400;
+      letter-spacing: 1px;
+      margin: 15px 0;
+      font-style: italic;
+      text-transform: none;
+    }
+    
+    .content {
+      padding: 40px;
+    }
+    
+    .section {
+      background: white;
+      border-radius: 0;
+      padding: 35px;
+      margin-bottom: 30px;
+      border: none;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .section-title {
+      font-size: 1.4rem;
+      color: #1a1a1a;
+      margin-bottom: 25px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      letter-spacing: 0.5px;
+    }
+    
+    .section-title::before {
+      content: '';
+      width: 3px;
+      height: 25px;
+      background: #556B2F;
+      border-radius: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-row > * {
+      flex: 1;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn {
+      background: #556B2F;
+      color: white;
+      border: 2px solid #556B2F;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    
+    .btn:hover {
+      background: #4A5D28;
+      color: white;
+      border-color: #4A5D28;
+    }
+    
+    .btn:disabled {
+      background: #e9ecef;
+      color: #6c757d;
+      border-color: #e9ecef;
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      background: #D2B48C;
+      color: white;
+      border: 2px solid #D2B48C;
+    }
+    
+    .btn-secondary:hover {
+      background: #C19A6B;
+      color: white;
+      border-color: #C19A6B;
+    }
+    
+    #card-container {
+      min-height: 120px;
+      border: 2px dashed #e9ecef;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      margin: 15px 0;
+      transition: all 0.3s ease;
+    }
+    
+    #card-container:focus-within {
+      border-color: #667eea;
+      background: white;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #667eea;
+    }
+    
+    .checkbox-group label {
+      font-size: 1rem;
+      color: #495057;
+      cursor: pointer;
+    }
+    
+    .customer-results {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+      border: 1px solid #e9ecef;
+    }
+    
+    .customer-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 5px 0;
+      transition: background 0.2s ease;
+    }
+    
+    .customer-option:hover {
+      background: #f8f9fa;
+    }
+    
+    .customer-option input[type="radio"] {
+      accent-color: #667eea;
+    }
+    
+    .status-message {
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      font-weight: 500;
+    }
+    
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .log {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    
+    .expandable {
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+    
+    .expandable summary {
+      padding: 15px;
+      background: #f8f9fa;
+      cursor: pointer;
+      font-weight: 500;
+      color: #495057;
+      transition: background 0.2s ease;
+    }
+    
+    .expandable summary:hover {
+      background: #e9ecef;
+    }
+    
+    .expandable-content {
+      padding: 20px;
+      background: white;
+    }
+    
+    .icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    
+    .hint {
+      color: #6c757d;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      padding: 10px;
+      background: #e9ecef;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        border-radius: 15px;
+      }
+      
+      .header {
+        padding: 30px 20px;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-top">NAIL — STUDIO</div>
+        <div class="logo-main">ZORINA</div>
+        <div class="logo-bottom">SAN FRANCISCO</div>
+      </div>
+      <div class="subtitle">Russian Manicure Specialists</div>
+      <div class="slogan">Try it once, love it forever</div>
+      <div class="subtitle-small">Secure Payment Setup</div>
+    </div>
+    
+    <div class="content">
+      <div class="section">
+        <div class="section-title">Business Location</div>
+        <div class="form-group">
+          <select id="locationSelect" class="form-control"></select>
+        </div>
+        <div class="hint">Using test account: <strong>MLY8189GETHQB</strong> (Default Test Account)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Customer Profile</div>
+        <div class="form-row">
+          <input id="email" class="form-control" placeholder="Email address" />
+          <input id="phone" class="form-control" placeholder="Phone number" />
+          <button id="btnSearch" class="btn">Search Customer</button>
+        </div>
+        
+        <div id="results"></div>
+        
+        <div class="expandable">
+          <summary>Create New Customer</summary>
+          <div class="expandable-content">
+            <div class="form-row">
+              <input id="gn" class="form-control" placeholder="First name" />
+              <input id="fn" class="form-control" placeholder="Last name" />
+            </div>
+            <button id="btnCreate" class="btn btn-secondary">Create Customer</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Payment Method</div>
+        <div class="form-group">
+          <label class="form-label">Cardholder Name</label>
+          <input id="cardholder" class="form-control" placeholder="Name as it appears on card" />
+        </div>
+        
+        <div id="card-container">
+          <div style="color: #6c757d; text-align: center;">
+            <div style="font-size: 1.2rem; margin-bottom: 10px; font-weight: 500;">CARD FORM</div>
+            <div>Card form will appear here</div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <input id="postal" class="form-control" placeholder="ZIP/Postal Code" />
+          <input id="city" class="form-control" placeholder="City (optional)" />
+        </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="consent" />
+          <label for="consent">I agree to save my card for future payments and appointments</label>
+        </div>
+        
+        <button id="btnSave" class="btn" disabled>Save Payment Method</button>
+      </div>
+      
+      <div id="log" class="log"></div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    let merchantId = urlParams.get('merchant_id');
+    
+    // Use test merchant ID if no OAuth merchant ID is present
+    if (!merchantId) {
+      merchantId = 'MLY8189GETHQB'; // Your test merchant ID
+    }
+    
+    if (merchantId) localStorage.setItem('merchant_id', merchantId);
+    const MERCHANT_ID = localStorage.getItem('merchant_id');
+
+    let LOCATION_ID = null;
+    let payments = null;
+    let card = null;
+    let selectedCustomerId = null;
+
+    function log(msg){
+      const el = document.getElementById('log');
+      el.textContent += (el.textContent ? '\n' : '') + msg;
+    }
+
+    async function fetchJson(url, opts={}){
+      opts.headers = Object.assign({}, opts.headers, {
+        'x-merchant-id': MERCHANT_ID || ''
+      });
+      const r = await fetch(url, opts);
+      if (!r.ok) throw await r.json().catch(()=>({error:r.statusText}));
+      return r.json();
+    }
+
+    async function loadLocations(){
+      const data = await fetchJson('/api/locations');
+      const sel = document.getElementById('locationSelect');
+      sel.innerHTML = data.locations.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+      LOCATION_ID = data.locations[0]?.id || null;
+      sel.onchange = async (e)=>{ LOCATION_ID = e.target.value; await initSquare(); };
+    }
+
+    async function initSquare(){
+      if (!window.Square) throw new Error('Square.js failed to load');
+      if (!LOCATION_ID) throw new Error('Select a location first');
+
+      const appId = document.querySelector('script[src*="squarecdn"]').src.includes('sandbox')
+        ? 'sandbox-sq0idb-EEpHXdJOuHwwWcRjpMVz0w'
+        : '<YOUR_PRODUCTION_APP_ID>';
+
+      payments = window.Square.payments(appId, LOCATION_ID);
+      try { if (card && card.destroy) await card.destroy(); } catch(_){ }
+      document.getElementById('card-container').innerHTML = '';
+      card = await payments.card();
+      await card.attach('#card-container');
+    }
+
+    document.getElementById('btnSearch').onclick = async () => {
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      try{
+        const data = await fetchJson('/api/customers/search', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email, phone })
+        });
+        const box = document.getElementById('results');
+        if (!data.customers?.length){
+          box.innerHTML = '<em>No matches</em>';
+          selectedCustomerId = null; document.getElementById('btnSave').disabled = true; return;
+        }
+        box.innerHTML = data.customers.map(c => `
+          <div class="customer-option">
+            <input type="radio" name="cust" value="${c.id}"/>
+            <span>${c.given_name||''} ${c.family_name||''} — ${c.email_address||''} ${c.phone_number||''}</span>
+          </div>`).join('');
+        [...box.querySelectorAll('input[name=cust]')].forEach(r => {
+          r.onchange = () => { selectedCustomerId = r.value; document.getElementById('btnSave').disabled = !selectedCustomerId; };
+        });
+      } catch(e){ log('Search failed: ' + (e.error||e.message)); }
+    };
+
+    document.getElementById('btnCreate').onclick = async () => {
+      const given_name  = document.getElementById('gn').value.trim();
+      const family_name = document.getElementById('fn').value.trim();
+      const email       = document.getElementById('email').value.trim();
+      const phone       = document.getElementById('phone').value.trim();
+      try{
+        const data = await fetchJson('/api/customers', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ given_name, family_name, email, phone })
+        });
+        selectedCustomerId = data.customer.id;
+        document.getElementById('results').innerHTML = `<div class="status-message status-success">✅ Customer Created: ${data.customer.given_name||''} ${data.customer.family_name||''} (${data.customer.id})</div>`;
+        document.getElementById('btnSave').disabled = false;
+      } catch(e){ log('Create failed: ' + (e.error||e.message)); }
+    };
+
+    document.getElementById('btnSave').onclick = async () => {
+      if (!selectedCustomerId) return alert('Pick a customer first');
+      if (!document.getElementById('consent').checked) return alert('Need consent to save the card');
+
+      const cardholder = document.getElementById('cardholder').value.trim();
+      const postal     = document.getElementById('postal').value.trim();
+      const city       = document.getElementById('city').value.trim();
+
+      try{
+        const verificationDetails = {
+          billingContact: { givenName: cardholder||undefined, postalCode: postal||undefined, city: city||undefined },
+          intent: 'STORE', customerInitiated: true, sellerKeyedIn: false
+        };
+        const tokenResult = await card.tokenize(verificationDetails);
+        if (tokenResult.status !== 'OK') throw tokenResult;
+
+        const resp = await fetch('/api/cards', {
+          method:'POST', headers:{'Content-Type':'application/json', 'x-merchant-id': MERCHANT_ID||''},
+          body: JSON.stringify({
+            sourceId: tokenResult.token,
+            customerId: selectedCustomerId,
+            cardholderName: cardholder,
+            billingAddress: { postal_code: postal, locality: city }
+          })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw data;
+        log('Saved card: ' + data.card.id + ' •••• ' + data.card.last_4);
+      } catch(e){
+        log('Save failed: ' + (e.error || JSON.stringify(e)));
+      }
+    };
+
+    (async function init(){
+      if (!MERCHANT_ID) {
+        document.querySelector('.hint').innerHTML = 'Not connected. <a href="/connect">Connect a seller</a> first.';
+        return;
+      }
+      await loadLocations();
+      await initSquare();
+    })();
+  </script>
+</body>
+</html>
