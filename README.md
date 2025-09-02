@@ -1,113 +1,146 @@
-# Square Save Card Starter
+# Square Voice Agent
 
-A Node.js + Express application that demonstrates how to implement Square's Web Payments SDK with OAuth for marketplace sellers to save customer payment cards on file.
+A production-ready Node.js application for Square API integration with OAuth authentication and customer management.
+
+## Architecture
+
+The application follows SOLID principles and clean code practices:
+
+- **Single Responsibility**: Each class has one reason to change
+- **Open/Closed**: Open for extension, closed for modification
+- **Liskov Substitution**: Services can be easily replaced
+- **Interface Segregation**: Controllers depend only on what they need
+- **Dependency Inversion**: High-level modules don't depend on low-level modules
+
+## Project Structure
+
+```
+src/
+├── config/          # Configuration files
+├── controllers/     # Request handlers
+├── middleware/      # Express middleware
+├── routes/          # Route definitions
+├── services/        # Business logic
+├── utils/           # Utility functions
+├── app.js          # Main application class
+└── index.js        # Entry point
+```
 
 ## Features
 
-- **OAuth Integration**: Connect marketplace sellers to Square
-- **Customer Management**: Search and create customers
-- **Card Storage**: Save payment cards securely using Square's Web Payments SDK
-- **Location Management**: Handle multiple business locations
-- **Sandbox Support**: Test with Square's sandbox environment
+- OAuth 2.0 integration with Square
+- Customer management (create, list)
+- Security middleware (helmet, rate limiting, compression)
+- Error handling and logging
+- Health check endpoint
+- Docker containerization
+- Production-ready configuration
 
 ## Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
+- Docker and Docker Compose
 - Square Developer Account
-- Square Application with OAuth enabled
 
-## Setup
+## Quick Start
 
-1. **Clone and Install Dependencies**
-   ```bash
-   npm install
-   ```
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd square-voice-agent
+```
 
-2. **Environment Configuration**
-   - Copy `env.example` to `.env`
-   - Fill in your Square application credentials:
-     ```bash
-     SQUARE_ENV=sandbox
-     SQUARE_APP_ID=your_app_id_here
-     SQUARE_APP_SECRET=your_app_secret_here
-     SQUARE_REDIRECT_URL=http://localhost:3000/oauth/callback
-     PORT=3000
-     ```
+2. Install dependencies:
+```bash
+npm install
+```
 
-3. **Square Developer Console Setup**
-   - Create a new application in [Square Developer Console](https://developer.squareup.com/)
-   - Enable OAuth
-   - Set redirect URL to `http://localhost:3000/oauth/callback`
-   - Ensure scopes: `CUSTOMERS_READ`, `CUSTOMERS_WRITE`, `PAYMENTS_WRITE`, `PAYMENTS_READ`
+3. Create environment file:
+```bash
+cp .env.example .env
+# Edit .env with your Square credentials
+```
 
-4. **Update HTML with Your App ID**
-   - In `public/index.html`, replace `<YOUR_SANDBOX_APP_ID>` with your actual sandbox app ID
-   - For production, also update `<YOUR_PRODUCTION_APP_ID>`
-
-## Running the Application
-
-**Development Mode:**
+4. Start development server:
 ```bash
 npm run dev
 ```
 
-**Production Mode:**
+## Production Deployment
+
+### Docker Compose
+
 ```bash
-npm start
+# Start production stack
+docker-compose -f docker-compose.prod.yml up -d
+
+# Check status
+docker-compose -f docker-compose.prod.yml ps
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f
 ```
 
-The server will start on `http://localhost:3000`
+### Manual Docker
 
-## Usage Flow
+```bash
+# Build image
+docker build -t square-app .
 
-1. **Connect Seller**: Visit `/connect` to start OAuth flow
-2. **Authorize**: Approve permissions in Square
-3. **Return**: You'll be redirected back with a `merchant_id`
-4. **Select Location**: Choose from available business locations
-5. **Manage Customers**: Search existing or create new customers
-6. **Save Card**: Enter card details and save to customer profile
+# Run container
+docker run -d \
+  --name square-app \
+  -p 3000:3000 \
+  --env-file .env \
+  square-app
+```
 
-## Testing
+## Environment Variables
 
-Use Square's sandbox test cards:
-- **Card Number**: 4111 1111 1111 1111
-- **Expiry**: Any future date
-- **CVV**: Any 3 digits
-- **ZIP**: 10003 (must match in both tokenize and CreateCard calls)
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `SQUARE_ENV` | Square environment (sandbox/production) | Yes | sandbox |
+| `SQUARE_APP_ID` | Square application ID | Yes | - |
+| `SQUARE_APP_SECRET` | Square application secret | Yes | - |
+| `SQUARE_REDIRECT_URL` | OAuth redirect URL | Yes | - |
+| `PORT` | Server port | No | 3000 |
+| `NODE_ENV` | Node environment | No | development |
 
 ## API Endpoints
 
-- `GET /connect` - Start OAuth flow
-- `GET /oauth/callback` - OAuth callback handler
-- `GET /api/locations` - List seller locations
-- `POST /api/customers/search` - Search customers by email/phone
-- `POST /api/customers` - Create new customer
-- `POST /api/cards` - Save card on file
+- `GET /health` - Health check
+- `GET /oauth/connect` - Initiate OAuth flow
+- `GET /oauth/callback` - OAuth callback
+- `POST /api/customers` - Create customer
+- `GET /api/customers` - List customers
 
-## Architecture
+## Security Features
 
-- **Express Server**: RESTful API endpoints
-- **Square SDK**: Official Node.js SDK for Square APIs
-- **Web Payments SDK**: Client-side card tokenization
-- **OAuth Flow**: Secure seller authentication
-- **In-Memory Storage**: Simple token storage (replace with database in production)
+- Helmet.js for security headers
+- Rate limiting (100 requests per 15 minutes)
+- CORS protection
+- Input validation
+- Secure session handling
 
-## Production Considerations
+## Monitoring
 
-- Replace in-memory `sellers` Map with persistent database
-- Implement refresh token handling
-- Use HTTPS and real domain for redirect URLs
-- Switch to production Square SDK CDN
-- Add proper error handling and logging
-- Implement rate limiting and security headers
+- Health check endpoint: `/health`
+- Application logs: `docker-compose logs -f app`
+- Nginx logs: `docker-compose logs -f nginx`
 
-## Troubleshooting
+## Development
 
-- **OAuth Errors**: Verify app credentials and redirect URL
-- **Card Tokenization**: Ensure billing address ZIP matches between tokenize and CreateCard
-- **Location Issues**: Check if seller has active locations
-- **Customer Search**: Use exact email/phone matches
+```bash
+# Start development server
+npm run dev
+
+# Start production server
+npm start
+
+# Build Docker image
+docker build -t square-app .
+```
 
 ## License
 
-This project is for educational purposes. Refer to Square's [Terms of Service](https://squareup.com/legal/ua) for production use.
+MIT License
