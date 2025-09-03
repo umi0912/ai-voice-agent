@@ -1,11 +1,15 @@
 {
   "version": 2,
-  "functions": {
-    "api/square/oauth/connect.js": {
-      "maxDuration": 10
-    },
-    "api/square/oauth/callback.js": {
-      "maxDuration": 10
+  "builds": [
+    {
+      "src": "public/api/**/*.js",
+      "use": "@vercel/node"
     }
-  }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/public/api/$1"
+    }
+  ]
 }
