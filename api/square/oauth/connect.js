@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export default function handler(req, res) {
+  // Generate a simple state parameter
+  const state = Math.random().toString(36).substring(7);
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
