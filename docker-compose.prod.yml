@@ -3,13 +3,14 @@ version: '3.8'
 services:
   app:
     build: .
-    container_name: square-app
+    container_name: zorina-payment-app
     environment:
       - NODE_ENV=production
       - SQUARE_ENV=production
+      - SQUARE_APP_ID=sq0idp-jXJquQQ4uPG0_NwR7DL86Q
       - PORT=3000
     env_file:
-      - .env
+      - .env.production
     volumes:
       - ./logs:/app/logs
     restart: unless-stopped
@@ -20,11 +21,11 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - app-network
+      - payment-network
 
   nginx:
     image: nginx:alpine
-    container_name: square-nginx
+    container_name: zorina-nginx
     ports:
       - "80:80"
       - "443:443"
@@ -36,8 +37,8 @@ services:
       - app
     restart: unless-stopped
     networks:
-      - app-network
+      - payment-network
 
 networks:
-  app-network:
+  payment-network:
     driver: bridge
