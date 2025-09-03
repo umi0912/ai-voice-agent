@@ -1,12 +1,11 @@
 export default function handler(req, res) {
-  // Generate a simple state parameter
-  const state = Math.random().toString(36).substring(7);
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const state = uuidv4();
+    // Generate a simple state parameter
+    const state = Math.random().toString(36).substring(7);
     
     // Square OAuth URL
     const base = 'https://connect.squareup.com';
